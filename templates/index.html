@@ -5,74 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TeamTask - Flask App</title>
 
-    <!-- Bootstrap CSS -->
-    <link 
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
-        rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Google Font -->
+    <!-- Fuente -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-    <!-- Tu CSS personalizado -->
+    <!-- CSS personalizado -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header>
-        <h1 class="mb-0">TeamTask</h1>
-        <p class="mb-0">Gestión simple, diseño elegante</p>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">TeamTask</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="text-center py-5 bg-light">
+        <h1 class="fw-bold text-primary">Bienvenido a TeamTask 🚀</h1>
+        <p class="text-muted">Gestión sencilla, comunicación instantánea</p>
     </header>
 
-    <main>
-        <div class="card p-4" style="max-width: 420px; width: 100%;">
-            <h4 class="mb-3 text-center text-primary">Prueba el saludo Flask 🚀</h4>
-            <p class="text-center text-muted mb-4">Escribe tu nombre y recibe un saludo dinámico desde el servidor.</p>
-
-            <form id="formulario">
-                <div class="mb-3">
-                    <input 
-                        type="text" 
-                        id="nombre" 
-                        class="form-control" 
-                        placeholder="Tu nombre aquí..." 
-                        required>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container my-5">
+        <div class="row g-4 justify-content-center">
+            <!-- Tarjeta de saludo -->
+            <div class="col-md-5">
+                <div class="card p-4 shadow-lg border-0">
+                    <h4 class="mb-3 text-center text-primary">Saludo dinámico</h4>
+                    <form id="formulario">
+                        <input type="text" id="nombre" class="form-control mb-3" placeholder="Tu nombre aquí..." required>
+                        <button class="btn btn-primary w-100">Enviar saludo</button>
+                    </form>
+                    <div id="respuesta" class="mt-3 text-center"></div>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">
-                    Enviar saludo
-                </button>
-            </form>
+            </div>
 
-            <div id="respuesta" class="mt-3 text-center"></div>
+            <!-- Tarjeta de registro -->
+            <div class="col-md-5">
+                <div class="card p-4 shadow-lg border-0">
+                    <h4 class="mb-3 text-center text-success">Registro de usuarios</h4>
+                    <form id="formRegistro">
+                        <input type="text" id="usuario" class="form-control mb-3" placeholder="Nombre de usuario" required>
+                        <button class="btn btn-success w-100">Registrar</button>
+                    </form>
+                    <ul id="listaUsuarios" class="list-group mt-3"></ul>
+                </div>
+            </div>
         </div>
     </main>
 
+    <!-- FOOTER -->
     <footer>
         <p class="mb-0">© 2025 TeamTask — Creado con ❤️ usando Flask & Bootstrap</p>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.getElementById('formulario').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
+        // --- Saludo ---
+        document.getElementById('formulario').addEventListener('submit', async (e) => {
+            e.preventDefault();
             const nombre = document.getElementById('nombre').value.trim();
             const respuestaDiv = document.getElementById('respuesta');
-
-            if (!nombre) {
-                respuestaDiv.textContent = "Por favor, ingresa un nombre.";
-                respuestaDiv.className = "mt-3 text-danger text-center";
-                return;
-            }
-
+            respuestaDiv.textContent = "Cargando...";
             try {
-                const respuesta = await fetch(`/api/saludo?nombre=${encodeURIComponent(nombre)}`);
-                const data = await respuesta.json();
+                const res = await fetch(`/api/saludo?nombre=${encodeURIComponent(nombre)}`);
+                const data = await res.json();
                 respuestaDiv.textContent = data.mensaje;
                 respuestaDiv.className = "mt-3 text-success text-center";
-            } catch (error) {
-                respuestaDiv.textContent = "Error al conectar con el servidor 😕";
+            } catch {
+                respuestaDiv.textContent = "Error de conexión";
                 respuestaDiv.className = "mt-3 text-danger text-center";
+            }
+        });
+
+        // --- Registro ---
+        const listaUsuarios = document.getElementById('listaUsuarios');
+        document.getElementById('formRegistro').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usuario = document.getElementById('usuario').value.trim();
+            if (!usuario) return;
+
+            try {
+                const res = await fetch('/api/registrar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario })
+                });
+                const data = await res.json();
+
+                if (data.usuarios) {
+                    listaUsuarios.innerHTML = '';
+                    data.usuarios.forEach(u => {
+                        const li = document.createElement('li');
+                        li.className = "list-group-item";
+                        li.textContent = u;
+                        listaUsuarios.appendChild(li);
+                    });
+                }
+                document.getElementById('usuario').value = '';
+            } catch {
+                alert("Error al registrar usuario.");
             }
         });
     </script>

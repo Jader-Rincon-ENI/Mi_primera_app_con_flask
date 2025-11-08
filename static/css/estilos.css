@@ -61,3 +61,15 @@ footer {
     margin-top: 10px;
     font-weight: 500;
 }
+
+header {
+    background: #f8f9fa;
+}
+
+footer {
+    background-color: #0d6efd;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+}
