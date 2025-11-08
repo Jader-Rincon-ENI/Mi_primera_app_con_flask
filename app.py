@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, render_template
+import os
 
 app = Flask(__name__)
 
@@ -31,6 +32,7 @@ def error_404(e):
 def error_500(e):
     return jsonify({'error': 'Error interno del servidor'}), 500
 
-# --- EJECUCIÓN LOCAL ---
+# --- EJECUCIÓN EN RENDER ---
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Render asigna automáticamente el puerto
+    app.run(host='0.0.0.0', port=port)
