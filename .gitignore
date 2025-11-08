@@ -1,0 +1,29 @@
+# --- ENTORNOS VIRTUALES ---
+.venv/
+venv/
+env/
+
+# --- ARCHIVOS DE COMPILACIÓN ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- CONFIGURACIÓN / SECRETOS ---
+*.env
+.env
+instance/
+config.py
+
+# --- ARCHIVOS DE SISTEMA ---
+.DS_Store
+Thumbs.db
+
+# --- EDITORES / IDEs ---
+.vscode/
+.idea/
+
+# --- ENTORNOS Y DEPLOY ---
+*.log
+*.sqlite3
+*.db
